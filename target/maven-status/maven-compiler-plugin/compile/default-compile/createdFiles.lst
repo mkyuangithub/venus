@@ -1,0 +1,5 @@
+com/mkyuan/fountaingateway/config/LoggingGlobalFilter.class
+com/mkyuan/fountaingateway/config/RequestLoggingGatewayFilterFactory$Config.class
+com/mkyuan/fountaingateway/config/RequestLoggingGatewayFilterFactory.class
+com/mkyuan/fountaingateway/config/CorsConfig.class
+com/mkyuan/fountaingateway/FountainGatewayApplication.class

@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: apigateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        username: nacos
+        password: nacos
+        namespace: local
+      config:
+        server-addr: localhost:8848
+        username: nacos
+        password: nacos
+        namespace: local
+        group: DEFAULT_GROUP
+        file-extension: yaml
+        prefix: apigateway
+        refresh-enabled: true
