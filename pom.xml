@@ -22,10 +22,44 @@
         <spring-cloud.version>2020.0.1</spring-cloud.version>
         <spring-cloud-alibaba.version>2021.1</spring-cloud-alibaba.version>
         <log4j2.version>2.17.1</log4j2.version>
+        <spring.data.redis>1.8.14-RELEASE</spring.data.redis>
+        <redisson.version>3.19.1</redisson.version>
+        <common.langs3.version>3.17.0</common.langs3.version>
     </properties>
 
     <dependencies>
+        <!-- redis -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-boot-starter</artifactId>
+            <!-- <exclusions> <exclusion> <groupId>org.redisson</groupId> <artifactId>redisson-spring-data-23</artifactId>
+                </exclusion> </exclusions> -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>
+                        spring-boot-starter-actuator
+                    </artifactId>
+                </exclusion>
+            </exclusions>
+            <version>${redisson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson-spring-data-24</artifactId>
+            <version>${redisson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${jedis.version}</version>
+        </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${common.langs3.version}</version>
+        </dependency>
 
         <!-- Spring Cloud Gateway -->
         <dependency>
