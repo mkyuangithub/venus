@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/routes")
@@ -55,8 +57,10 @@ public class RouteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRoute(@PathVariable String id) {
+    public ResponseEntity<Map<String, String>>  deleteRoute(@PathVariable String id) {
         routeService.deleteRoute(id);
-        return ResponseEntity.ok().build();
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "successful");
+        return ResponseEntity.ok(response);
     }
 }
