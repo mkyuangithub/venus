@@ -1,3 +1,7 @@
+token:
+  signature: signature
+security:
+  key: 1234567890123456
 spring:
   application:
     name: apigateway
