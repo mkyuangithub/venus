@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequestMapping("/venus") // 添加统一的基础路径
 public class RouteController {
     protected Logger logger = LogManager.getLogger(this.getClass());
     @Autowired
