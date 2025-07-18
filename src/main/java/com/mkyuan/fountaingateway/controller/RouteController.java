@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/routes")
 public class RouteController {
     protected Logger logger = LogManager.getLogger(this.getClass());
     @Autowired
@@ -24,7 +23,7 @@ public class RouteController {
         return ResponseEntity.ok(routeService.getAllRoutes());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/api/admin/{id}")
     public ResponseEntity<GatewayRouteDefinition> getRoute(@PathVariable String id) {
         GatewayRouteDefinition route = routeService.getRoute(id);
         if (route == null) {
@@ -33,7 +32,7 @@ public class RouteController {
         return ResponseEntity.ok(route);
     }
 
-    @PostMapping
+    @PostMapping("/api/admin/create")
     public ResponseEntity<GatewayRouteDefinition> createRoute(@RequestBody GatewayRouteDefinition route) {
         try {
             logger.info(">>>>>>create a new route successfully");
@@ -44,7 +43,7 @@ public class RouteController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/api/admin/{id}")
     public ResponseEntity<GatewayRouteDefinition> updateRoute(@PathVariable String id, @RequestBody GatewayRouteDefinition route) {
         route.setId(id);
         try {
@@ -56,7 +55,7 @@ public class RouteController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/api/admin/{id}")
     public ResponseEntity<Map<String, String>>  deleteRoute(@PathVariable String id) {
         routeService.deleteRoute(id);
         Map<String, String> response = new HashMap<>();

@@ -14,6 +14,7 @@ public class CorsConfig {
         config.addAllowedOrigin("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
+        //config.setAllowCredentials(true);  // 允许携带认证信息
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

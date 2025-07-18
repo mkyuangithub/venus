@@ -4,6 +4,8 @@ import com.mkyuan.fountaingateway.admin.bean.LoginBean;
 import com.mkyuan.fountaingateway.admin.bean.UserInfo;
 import com.mkyuan.fountaingateway.admin.service.ILoginService;
 import com.mkyuan.fountaingateway.admin.service.LoginServiceFactory;
+import com.mkyuan.fountaingateway.common.controller.response.ResponseBean;
+import com.mkyuan.fountaingateway.common.controller.response.ResponseCodeEnum;
 import com.mkyuan.fountaingateway.common.util.EncryptUtil;
 import com.mkyuan.fountaingateway.gateway.model.GatewayRouteDefinition;
 import org.apache.logging.log4j.LogManager;
@@ -19,7 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 @RestController
-@RequestMapping("/gateway/admin")
+@RequestMapping("/venus") // 添加统一的基础路径
+
 public class GatewayUserLoginController {
     protected Logger logger = LogManager.getLogger(this.getClass());
 
@@ -29,8 +32,8 @@ public class GatewayUserLoginController {
     @Value("${security.key}")
     private String securityKey = "";
 
-    @PostMapping("/login")
-    public ResponseEntity<UserInfo> userLogin(@RequestBody  JSONObject params) {
+    @PostMapping("/api/admin/login")
+    public ResponseBean userLogin(@RequestBody  JSONObject params) {
         try {
             LoginBean loginBean=new LoginBean();
             String encryptedLoginPwd=params.getString("loginPwd");
@@ -48,10 +51,10 @@ public class GatewayUserLoginController {
             ILoginService loginService= loginServiceFactory.getLoginService(1);
             UserInfo userInfo=loginService.doLogin(loginBean);
             logger.info(">>>>>>process user login finished");
-            return ResponseEntity.ok(userInfo);
+            return new ResponseBean(ResponseCodeEnum.SUCCESS,userInfo);
         } catch (Exception e) {
             logger.error(">>>>>>userLogin API error->{}",e.getMessage(),e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return new ResponseBean(ResponseCodeEnum.FAIL);
         }
     }
 }
