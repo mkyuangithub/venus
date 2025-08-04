@@ -46,7 +46,6 @@ public class AuthService {
                 logger.info(">>>>>正在操作的用户传入的token->{}", userInfo.getUt());
                 if (userInfo.getUt().equals(existedUser.getUt())) {
                     logger.info(">>>>>正在操作的用户实际在redis内的token->{}，两者匹配", existedUser.getUt());
-                    redisTemplate.delete(redisKey);
                     return new ResponseBean(ResponseCodeEnum.SUCCESS, userInfo);
                 } else {
                     logger.info(">>>>>正在操作的用户实际在redis内的token->{}，两者不匹配", existedUser.getUt());

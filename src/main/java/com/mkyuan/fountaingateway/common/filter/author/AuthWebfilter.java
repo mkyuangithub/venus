@@ -21,9 +21,10 @@ import java.util.Arrays;
 import java.util.List;
 
 @Component
-public class AuthWebfilter  implements WebFilter {
+public class AuthWebfilter implements WebFilter {
     protected Logger logger = LogManager.getLogger(this.getClass());
-    private static final List<String> EXCLUDE_URLS = Arrays.asList("/venus/api/admin/login", "/venus/api/admin/logout");
+    private static final List<String> EXCLUDE_URLS =
+            Arrays.asList("/venus/api/admin/login", "/venus/api/admin/logout", "/venus/api/admin/checkUserLogin");
 
     @Autowired
     private AuthService authService;

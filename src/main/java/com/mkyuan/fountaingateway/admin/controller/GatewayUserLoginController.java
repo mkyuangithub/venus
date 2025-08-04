@@ -82,4 +82,25 @@ public class GatewayUserLoginController {
             return new ResponseBean(ResponseCodeEnum.FAIL);
         }
     }
+
+    @PostMapping("/api/admin/checkUserLogin")
+    public ResponseBean checkUserLogin(@RequestHeader("token") String token,@RequestHeader("loginId") String loginId) {
+        try {
+            String decryptToken="";
+            LoginBean loginBean=new LoginBean();
+            try{
+                decryptToken=EncryptUtil.decrypt_safeencode(token,securityKey);
+            }catch(Exception e){
+                decryptToken=token;
+            }
+            UserInfo userInfo=new UserInfo();
+            userInfo.setLoginId(loginId);
+            userInfo.setUt(decryptToken);
+            int result=userService.checkUserLogin(userInfo);
+            return new ResponseBean(ResponseCodeEnum.SUCCESS,result);
+        } catch (Exception e) {
+            logger.error(">>>>>>checkUserLogin API error->{}",e.getMessage(),e);
+            return new ResponseBean(ResponseCodeEnum.FAIL);
+        }
+    }
 }
