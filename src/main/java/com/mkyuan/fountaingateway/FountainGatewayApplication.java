@@ -62,6 +62,7 @@ public class FountainGatewayApplication {
             }else{
                 logger.info(">>>>>>there is a admin user, no need init");
             }
+
         }catch(Exception e){
             logger.error(">>>>>>init admin user error->{}",e.getMessage(),e);
         }

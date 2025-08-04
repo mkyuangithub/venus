@@ -1,4 +1,4 @@
-package com.mkyuan.fountaingateway.config;
+package com.mkyuan.fountaingateway.common.filter.logging;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
