@@ -4,6 +4,7 @@ import com.mkyuan.fountaingateway.admin.bean.LoginBean;
 import com.mkyuan.fountaingateway.admin.bean.UserInfo;
 import com.mkyuan.fountaingateway.admin.service.ILoginService;
 import com.mkyuan.fountaingateway.admin.service.LoginServiceFactory;
+import com.mkyuan.fountaingateway.admin.service.UserService;
 import com.mkyuan.fountaingateway.common.controller.response.ResponseBean;
 import com.mkyuan.fountaingateway.common.controller.response.ResponseCodeEnum;
 import com.mkyuan.fountaingateway.common.util.EncryptUtil;
@@ -14,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.alibaba.fastjson.JSONObject;
 @RestController
@@ -31,6 +29,9 @@ public class GatewayUserLoginController {
 
     @Value("${security.key}")
     private String securityKey = "";
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/api/admin/login")
     public ResponseBean userLogin(@RequestBody  JSONObject params) {
@@ -54,6 +55,30 @@ public class GatewayUserLoginController {
             return new ResponseBean(ResponseCodeEnum.SUCCESS,userInfo);
         } catch (Exception e) {
             logger.error(">>>>>>userLogin API error->{}",e.getMessage(),e);
+            return new ResponseBean(ResponseCodeEnum.FAIL);
+        }
+    }
+
+
+    @PostMapping("/api/admin/logout")
+    public ResponseBean logout(@RequestHeader("token") String token, @RequestBody  JSONObject params) {
+        try {
+            String decryptToken="";
+            LoginBean loginBean=new LoginBean();
+            String loginId=params.getString("loginId");
+            try{
+                decryptToken=EncryptUtil.decrypt_safeencode(token,securityKey);
+            }catch(Exception e){
+                decryptToken=token;
+            }
+            UserInfo userInfo=new UserInfo();
+            userInfo.setLoginId(loginId);
+            userInfo.setUt(decryptToken);
+            userService.logout(userInfo);
+            logger.info(">>>>>>user logout successfully");
+            return new ResponseBean(ResponseCodeEnum.SUCCESS,userInfo);
+        } catch (Exception e) {
+            logger.error(">>>>>>user logout API error->{}",e.getMessage(),e);
             return new ResponseBean(ResponseCodeEnum.FAIL);
         }
     }

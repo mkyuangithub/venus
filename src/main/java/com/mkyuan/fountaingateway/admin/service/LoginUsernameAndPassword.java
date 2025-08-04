@@ -67,6 +67,7 @@ public class LoginUsernameAndPassword implements ILoginService{
                 }
                 String token= MD5Util.generateToken(loginBean.getLoginId(),tokenSignature); //使用token:signature来进行token的获取
                 userInfo=new UserInfo();
+                userInfo.setLoginId(loginBean.getLoginId());
                 userInfo.setLoginStatus(1);
                 userInfo.setBizType(loginBean.getBizType());
                 userInfo.setUt(token);
