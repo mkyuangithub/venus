@@ -4,17 +4,28 @@ import com.mkyuan.fountaingateway.config.redis.RedisMessagePublisher;
 import com.mkyuan.fountaingateway.gateway.MongoRouteDefinitionLocator;
 import com.mkyuan.fountaingateway.gateway.RouteDefinitionRepository;
 import com.mkyuan.fountaingateway.gateway.model.GatewayRouteDefinition;
+import jodd.util.StringUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import com.mkyuan.fountaingateway.common.RedisKeyConstants;
+
+import java.util.Collections;
 import java.util.List;
 
 @Service
 public class RouteService {
     protected Logger logger = LogManager.getLogger(this.getClass());
+    public final static int PAGESIZE=20;
 
     @Autowired
     private RouteDefinitionRepository repository;
@@ -27,6 +38,29 @@ public class RouteService {
 
     @Autowired
     private MongoRouteDefinitionLocator routeDefinitionLocator;
+
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+    public Page<GatewayRouteDefinition> searchRoutes(int pageNumber, int pageSize, String searchedUri){
+        String collectionName = "gateway_routes";
+        Pageable pageable = PageRequest.of(0, PAGESIZE); // 创建一个分页请求
+        Page<GatewayRouteDefinition> userList = new PageImpl<>(Collections.emptyList(), pageable, PAGESIZE);
+        try{
+            Query query = new Query();
+            if(StringUtil.isNotBlank(searchedUri)) {
+                query.addCriteria(Criteria.where("uri").regex(".*" + searchedUri + ".*", "i"));
+            }
+            // 检查 queryDate 是否不为空
+
+            long count = mongoTemplate.count(query, GatewayRouteDefinition.class, collectionName);
+            List<GatewayRouteDefinition> users = mongoTemplate.find(query.with(PageRequest.of(pageNumber - 1, pageSize)), GatewayRouteDefinition.class, collectionName);
+            return new PageImpl<>(users, PageRequest.of(pageNumber - 1, pageSize), count);
+        }catch(Exception e){
+            logger.error(">>>>>>list All gateway_routes service error->{}",e.getMessage(),e);
+        }
+        return userList;
+    }
 
     public List<GatewayRouteDefinition> getAllRoutes() {
         return repository.findAll();

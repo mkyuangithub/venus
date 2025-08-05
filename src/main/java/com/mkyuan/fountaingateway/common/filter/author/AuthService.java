@@ -22,6 +22,7 @@ public class AuthService {
     private String securityKey = "";
 
     public ResponseBean checkUserAuth(String token, String loginId) {
+        logger.info(">>>>>>当前需要认证的loginId->{}, 加密的token->{}",loginId,token);
         if (token == null || loginId == null) {
             return new ResponseBean(ResponseCodeEnum.LOGIN_ERROR, null);
         }

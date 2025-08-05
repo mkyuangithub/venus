@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -32,9 +33,21 @@ public class AuthWebfilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
+        String method = request.getMethod().name();
+        // 对于OPTIONS请求，直接放行，让CorsWebFilter处理
+        if (HttpMethod.OPTIONS.matches(method)) {
+            return chain.filter(exchange);
+        }
+
         String path = request.getURI().getPath();
         logger.info(">>>>>>当前正在请求的api路径为->{}", path);
-
+        // 打印所有请求头，便于调试
+        logger.info(">>>>>>当前正在请求的api路径为->{}", path);
+        request.getHeaders().forEach((name, values) -> {
+            logger.info(">>>>>>请求头: {} = {}", name, values);
+        });
+        String token="";
+        String loginId="";
         // 检查是否为排除的URL
         if (EXCLUDE_URLS.contains(path)) {
             logger.info(">>>>> 请求路径 [{}] 在排除列表中，跳过认证", path);
@@ -44,8 +57,8 @@ public class AuthWebfilter implements WebFilter {
         logger.info(">>>>> 请求路径 [{}] 需要进行认证", path);
 
         // 获取请求头中的token和loginId
-        String token = request.getHeaders().getFirst("token");
-        String loginId = request.getHeaders().getFirst("loginId");
+         token = request.getHeaders().getFirst("token");
+         loginId = request.getHeaders().getFirst("loginId");
 
         // 验证用户认证信息
         ResponseBean responseBean = authService.checkUserAuth(token, loginId);
