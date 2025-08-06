@@ -58,13 +58,16 @@ public class RouteController {
     }
 
     @PostMapping("/api/admin/route/create")
-    public ResponseEntity<GatewayRouteDefinition> createRoute(@RequestBody GatewayRouteDefinition route) {
+    public ResponseBean createRoute(@RequestBody GatewayRouteDefinition route) {
         try {
             logger.info(">>>>>>create a new route successfully");
-            return ResponseEntity.ok(routeService.saveRoute(route));
+            GatewayRouteDefinition newRoute = routeService.saveRoute(route);
+            return new ResponseBean(ResponseCodeEnum.SUCCESS, newRoute);
+        } catch (RouteAdminException rae) {
+            return new ResponseBean(ResponseCodeEnum.ILLEGAL_PARAMETERS.getCode(), "创建路由失败，因为路由的service id己存在!", null);
         } catch (Exception e) {
             logger.error(">>>>>>create routeDefinition error: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return new ResponseBean(ResponseCodeEnum.FAIL);
         }
     }
 

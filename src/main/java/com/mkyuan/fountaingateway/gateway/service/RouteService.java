@@ -1,6 +1,7 @@
 package com.mkyuan.fountaingateway.gateway.service;
 
 import com.mkyuan.fountaingateway.config.redis.RedisMessagePublisher;
+import com.mkyuan.fountaingateway.controller.RouteAdminException;
 import com.mkyuan.fountaingateway.gateway.MongoRouteDefinitionLocator;
 import com.mkyuan.fountaingateway.gateway.RouteDefinitionRepository;
 import com.mkyuan.fountaingateway.gateway.model.GatewayRouteDefinition;
@@ -72,6 +73,11 @@ public class RouteService {
 
     public GatewayRouteDefinition saveRoute(GatewayRouteDefinition route) throws Exception {
         try {
+            GatewayRouteDefinition existedRoute=this.getRoute(route.getId());
+            if(existedRoute!=null){
+                logger.info(">>>>>>Create route->service id->{} has already existed",route.getId());
+                throw new RouteAdminException("route existed");
+            }
             String action = "UPDATE";
             GatewayRouteDefinition savedRoute = repository.save(route);
             this.saveRouteDefinitionToRedis(route);
@@ -79,7 +85,11 @@ public class RouteService {
             // 发布路由变更消息到Stream
             redisMessagePublisher.publishRouteChangeMessage(action, route.getId());
             return savedRoute;
-        } catch (Exception e) {
+        }
+        catch (RouteAdminException rae) {
+            throw new RouteAdminException("route existed");
+        }
+        catch (Exception e) {
             throw new Exception(">>>>>>save routeDefinition error: "+e.getMessage(),e);
         }
     }
