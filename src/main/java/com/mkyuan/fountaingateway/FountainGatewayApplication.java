@@ -4,6 +4,7 @@ package com.mkyuan.fountaingateway;
 import com.mkyuan.fountaingateway.admin.bean.UserInfo;
 import com.mkyuan.fountaingateway.common.util.EncryptUtil;
 import com.mkyuan.fountaingateway.common.util.MD5Util;
+import com.mkyuan.fountaingateway.gateway.service.RouteService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.redisson.spring.starter.RedissonAutoConfiguration;
@@ -42,12 +43,18 @@ public class FountainGatewayApplication {
     @Value("${venus.admin_default_password}")
     private String venusAdminDefaultPassword;
 
+    @Autowired
+    private RouteService routeService;
 
     public static void main(String[] args) {
         SpringApplication.run(FountainGatewayApplication.class, args);
     }
     @PostConstruct
-    public void initAdminPwd() {
+    public void init(){
+        initAdminPwd();
+        this.routeService.refreshAllDataToRedis();
+    }
+    private void initAdminPwd() {
         try{
             // 检查管理员用户是否存在
             if (!checkAdminUserInMongo()) {

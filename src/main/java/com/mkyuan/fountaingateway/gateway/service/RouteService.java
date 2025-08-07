@@ -63,6 +63,17 @@ public class RouteService {
         return userList;
     }
 
+    public void refreshAllDataToRedis(){
+        try{
+            List<GatewayRouteDefinition> routeList=repository.findAll();
+            for(GatewayRouteDefinition route: routeList){
+                this.saveRouteDefinitionToRedis(route);
+            }
+
+        }catch(Exception e){
+            logger.error(">>>>>>refreshAllDataToRedis error->{}",e.getMessage(),e);
+        }
+    }
     public List<GatewayRouteDefinition> getAllRoutes() {
         return repository.findAll();
     }
