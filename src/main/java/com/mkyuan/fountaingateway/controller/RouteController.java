@@ -44,7 +44,6 @@ public class RouteController {
         Pageable pageable = PageRequest.of(0, RouteService.PAGESIZE); // 创建一个分页请求
         Page<GatewayRouteDefinition> routeList = new PageImpl<>(Collections.emptyList(), pageable, 0);
         routeList = routeService.searchRoutes(pageNumber, pageSize, searchedUri);
-        logger.info(">>>>>>searchRoutes 总计是到->{} 条记录", routeList.getSize());
         return new ResponseBean(ResponseCodeEnum.SUCCESS, routeList);
     }
 

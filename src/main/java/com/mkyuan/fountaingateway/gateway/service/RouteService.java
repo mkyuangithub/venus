@@ -55,8 +55,9 @@ public class RouteService {
             // 检查 queryDate 是否不为空
 
             long count = mongoTemplate.count(query, GatewayRouteDefinition.class, collectionName);
-            List<GatewayRouteDefinition> users = mongoTemplate.find(query.with(PageRequest.of(pageNumber - 1, pageSize)), GatewayRouteDefinition.class, collectionName);
-            return new PageImpl<>(users, PageRequest.of(pageNumber - 1, pageSize), count);
+            List<GatewayRouteDefinition> routeList = mongoTemplate.find(query.with(PageRequest.of(pageNumber - 1, pageSize)), GatewayRouteDefinition.class, collectionName);
+            logger.info(">>>>>>searchRoutes 总计搜到->{} 条记录", count);
+            return new PageImpl<>(routeList, PageRequest.of(pageNumber - 1, pageSize), count);
         }catch(Exception e){
             logger.error(">>>>>>list All gateway_routes service error->{}",e.getMessage(),e);
         }
