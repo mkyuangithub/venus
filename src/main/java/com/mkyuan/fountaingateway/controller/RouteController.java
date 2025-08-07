@@ -47,13 +47,14 @@ public class RouteController {
         return new ResponseBean(ResponseCodeEnum.SUCCESS, routeList);
     }
 
-    @GetMapping("/api/admin/route/{id}")
-    public ResponseEntity<GatewayRouteDefinition> getRoute(@PathVariable String id) {
-        GatewayRouteDefinition route = routeService.getRoute(id);
+    @GetMapping("/api/admin/route/getRouteById")
+    public ResponseBean getRoute(
+            @RequestParam(value = "routeId", required = true, defaultValue = "") String routeId) {
+        GatewayRouteDefinition route = routeService.getRoute(routeId);
         if (route == null) {
-            return ResponseEntity.notFound().build();
+            return new ResponseBean(ResponseCodeEnum.SUCCESS,new GatewayRouteDefinition());
         }
-        return ResponseEntity.ok(route);
+        return new ResponseBean(ResponseCodeEnum.SUCCESS,route);
     }
 
     @PostMapping("/api/admin/route/create")
@@ -63,31 +64,32 @@ public class RouteController {
             GatewayRouteDefinition newRoute = routeService.saveRoute(route);
             return new ResponseBean(ResponseCodeEnum.SUCCESS, newRoute);
         } catch (RouteAdminException rae) {
-            return new ResponseBean(ResponseCodeEnum.ILLEGAL_PARAMETERS.getCode(), "创建路由失败，因为路由的service id己存在!", null);
+            return new ResponseBean(ResponseCodeEnum.ILLEGAL_PARAMETERS.getCode(),
+                    "创建路由失败，因为路由的service id己存在!", null);
         } catch (Exception e) {
             logger.error(">>>>>>create routeDefinition error: {}", e.getMessage(), e);
             return new ResponseBean(ResponseCodeEnum.FAIL);
         }
     }
 
-    @PutMapping("/api/admin/route/{id}")
-    public ResponseEntity<GatewayRouteDefinition> updateRoute(@PathVariable String id,
-                                                              @RequestBody GatewayRouteDefinition route) {
-        route.setId(id);
+    @PostMapping("/api/admin/route/update")
+    public ResponseBean updateRoute(@RequestBody GatewayRouteDefinition route) {
         try {
             logger.info(">>>>>>update a route successfully");
-            return ResponseEntity.ok(routeService.saveRoute(route));
+            routeService.updateRoute(route);
+            return new ResponseBean(ResponseCodeEnum.SUCCESS,route);
         } catch (Exception e) {
             logger.error(">>>>>>save routeDefinition error: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return new ResponseBean(ResponseCodeEnum.FAIL);
         }
     }
 
-    @DeleteMapping("/api/admin/route/{id}")
-    public ResponseEntity<Map<String, String>> deleteRoute(@PathVariable String id) {
-        routeService.deleteRoute(id);
+    @PostMapping("/api/admin/route/delete")
+    public ResponseBean deleteRoute(@RequestBody JSONObject params) {
+        List<String> ids = params.getJSONArray("ids").toJavaList(String.class);
+        routeService.deleteRoute(ids);
         Map<String, String> response = new HashMap<>();
         response.put("status", "successful");
-        return ResponseEntity.ok(response);
+        return new ResponseBean(ResponseCodeEnum.SUCCESS);
     }
 }
