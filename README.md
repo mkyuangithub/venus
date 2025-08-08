@@ -3,6 +3,18 @@
 
 api-gateway, an enterprise level API Gateway,  based on spring cloud api gateway-2.0 dynamic configuration.
 
+# technology stack
+* nacos-2.0.2
+* mongodb-4.2.18
+* redis-6 or 7
+* openjdk11
+* spring boot parent 2.4.2
+* vue3 ant design and setp script
+
+# how to find the frontend project the apigateway-webapp
+
+[apigateway-webapp GitHub Repository](https://github.com/mkyuangithub/apigateway-webapp)
+
 # what's difference between Venus and API Gateway
 ## normal api-gateway configuration
 
