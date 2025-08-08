@@ -18,6 +18,7 @@ import reactor.core.publisher.Flux;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Map;
@@ -43,6 +44,18 @@ public class MongoRouteDefinitionLocator implements RouteDefinitionLocator, Appl
         List<RouteDefinition> routeDefinitions = gatewayRouteDefinitions.stream()
                 .map(this::convertToRouteDefinition)
                 .collect(Collectors.toList());
+
+        // 添加日志，显示每个路由的超时设置
+        for (RouteDefinition rd : routeDefinitions) {
+            if (rd.getMetadata() != null) {
+                logger.info("路由 {} 的超时设置: response-timeout={}, connect-timeout={}",
+                        rd.getId(),
+                        rd.getMetadata().get("response-timeout"),
+                        rd.getMetadata().get("connect-timeout"));
+            } else {
+                logger.info("路由 {} 没有元数据", rd.getId());
+            }
+        }
         return Flux.fromIterable(routeDefinitions);
     }
     private List<GatewayRouteDefinition> getRouteDefinitionFromRedis(){
@@ -99,6 +112,42 @@ public class MongoRouteDefinitionLocator implements RouteDefinitionLocator, Appl
             filterDefinitions.add(filterDefinition);
         }
         routeDefinition.setFilters(filterDefinitions);
+
+        // 添加对metadata的处理
+        if (gatewayRouteDefinition.getMetadata() != null) {
+            Map<String, Object> metadata = new HashMap<>();
+
+            for (Map.Entry<String, Object> entry : gatewayRouteDefinition.getMetadata().entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+
+                // 特别处理超时相关的值，确保它们是Long类型
+                if ("response-timeout".equals(key) || "connect-timeout".equals(key)) {
+                    if (value instanceof Number) {
+                        metadata.put(key, ((Number) value).longValue());
+                        logger.debug("Converting timeout value for {}: {} to Long: {}",
+                                key, value, ((Number) value).longValue());
+                    } else if (value instanceof String) {
+                        try {
+                            long longValue = Long.parseLong((String) value);
+                            metadata.put(key, longValue);
+                            logger.debug("Converting timeout string for {}: {} to Long: {}",
+                                    key, value, longValue);
+                        } catch (NumberFormatException e) {
+                            logger.warn("Failed to parse timeout value: {}", value, e);
+                            metadata.put(key, value); // 保留原值
+                        }
+                    } else {
+                        metadata.put(key, value); // 保留原值
+                    }
+                } else {
+                    metadata.put(key, value); // 其他值保持不变
+                }
+            }
+
+            routeDefinition.setMetadata(metadata);
+            logger.debug("Route {} metadata after conversion: {}", routeDefinition.getId(), metadata);
+        }
 
         return routeDefinition;
     }

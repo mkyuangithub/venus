@@ -6,7 +6,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Document(collection = "gateway_routes")
 public class GatewayRouteDefinition {
@@ -14,9 +16,19 @@ public class GatewayRouteDefinition {
     private String id;
     private String uri;
     private List<PredicateDefinition> predicates = new ArrayList<>();
+    private Map<String, Object> metadata = new HashMap<>();  // 添加 metadata 字段
     private List<FilterDefinition> filters = new ArrayList<>();
     private int order = 0;
 
+
+    // 添加 getter 和 setter
+    public Map<String, Object> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Map<String, Object> metadata) {
+        this.metadata = metadata;
+    }
     // getters and setters
     public String getId() {
         return id;

@@ -28,6 +28,7 @@ import com.mkyuan.fountaingateway.common.RedisKeyConstants;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class RouteService {
@@ -103,6 +104,23 @@ public class RouteService {
                 throw new RouteAdminException("route existed");
             }
             String action = "UPDATE";
+            if (route.getMetadata() != null) {
+                Map<String, Object> metadata = route.getMetadata();
+
+                if (metadata.containsKey("response-timeout")) {
+                    Object value = metadata.get("response-timeout");
+                    if (value instanceof Number) {
+                        metadata.put("response-timeout", ((Number) value).longValue());
+                    }
+                }
+
+                if (metadata.containsKey("connect-timeout")) {
+                    Object value = metadata.get("connect-timeout");
+                    if (value instanceof Number) {
+                        metadata.put("connect-timeout", ((Number) value).longValue());
+                    }
+                }
+            }
             GatewayRouteDefinition savedRoute = repository.save(route);
             this.saveRouteDefinitionToRedis(route);
             routeDefinitionLocator.refresh();
@@ -119,7 +137,23 @@ public class RouteService {
     public GatewayRouteDefinition updateRoute(GatewayRouteDefinition route) throws Exception {
         String collectionName = "gateway_routes";
         try {
+            if (route.getMetadata() != null) {
+                Map<String, Object> metadata = route.getMetadata();
 
+                if (metadata.containsKey("response-timeout")) {
+                    Object value = metadata.get("response-timeout");
+                    if (value instanceof Number) {
+                        metadata.put("response-timeout", ((Number) value).longValue());
+                    }
+                }
+
+                if (metadata.containsKey("connect-timeout")) {
+                    Object value = metadata.get("connect-timeout");
+                    if (value instanceof Number) {
+                        metadata.put("connect-timeout", ((Number) value).longValue());
+                    }
+                }
+            }
             String action = "UPDATE";
             // 更新MongoDB中的路由定义
             mongoTemplate.save(route, collectionName);
