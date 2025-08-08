@@ -5,7 +5,9 @@ api-gateway, an enterprise level API Gateway,  based on spring cloud api gateway
 
 # what's difference between Venus and API Gateway
 ## normal api-gateway configuration
+
 <img width="890" height="320" alt="图片" src="https://github.com/user-attachments/assets/a94578a5-782f-4838-8b8f-3b9c689353ea" />
+
 ### weakness point
 * hardcode
 * not run-time configured
