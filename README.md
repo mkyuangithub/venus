@@ -36,3 +36,9 @@ All in dynamic configuration and real time effected.
 
 <img width="1376" height="213" alt="图片" src="https://github.com/user-attachments/assets/7f0eb973-e200-4aaf-9157-047ee9384c62" />
 
+<img width="945" height="656" alt="图片" src="https://github.com/user-attachments/assets/6eb1a35a-d1d8-416f-9554-f1e0e3ba6549" />
+
+<img width="859" height="291" alt="图片" src="https://github.com/user-attachments/assets/12a07e5f-9674-4275-a2e0-5e84b15840df" />
+
+
+
