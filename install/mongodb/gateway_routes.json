@@ -1,1 +1,0 @@
-{"_id":"route-a","uri":"lb://service-a","predicates":[{"name":"Path","args":{"pattern":"/a/**"}}],"filters":[{"name":"PreserveHostHeader","args":{}}],"order":0,"_class":"com.mkyuan.fountaingateway.gateway.model.GatewayRouteDefinition"}
